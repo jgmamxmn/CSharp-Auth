@@ -518,7 +518,7 @@ namespace Delight.Auth
 						{"user" , userId },
 						{"selector" , selector},
 						{"token" , tokenHashed},
-						{"expires" , (expires is DateTime dtExpires ? (expires-new DateTime(1970,0,0)).Value.TotalSeconds : 0) }
+						{"expires" , (expires is DateTime dtExpires ? (dtExpires-new DateTime(1970,1,1)).TotalSeconds : 0) }
 					}
 				);
 			}

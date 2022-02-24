@@ -373,7 +373,7 @@ namespace Delight.Cookie
 		public static string buildCookieHeader(string name, string value = null, DateTime? expiryTime_ = null, string path = null, string domain = null, bool secureOnly = false, bool httpOnly = false, string sameSiteRestriction = null)
 		{
 			int expiryTime = (int)(expiryTime_ is DateTime dtExpiryTime
-								? (dtExpiryTime-new DateTime(1970,0,0)).TotalSeconds
+								? (dtExpiryTime-new DateTime(1970,1,1)).TotalSeconds
 								: 0);
 
 			if (!isNameValid(name))

@@ -40,6 +40,7 @@ namespace Delight.Shim
 		public _COOKIE() : base()
 		{
 		}
+		public Dictionary<string, Delight.Cookie.Cookie> GetLiveCollection() => Dict;
 		public void Set(string key, Delight.Cookie.Cookie cookieEntry)
 		{
 			if (Dict.ContainsKey(key))
