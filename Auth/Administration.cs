@@ -21,8 +21,10 @@ namespace Delight.Auth
 		 * @param string|null dbTablePrefix (optional) the prefix for the names of all database tables used by this component
 		 * @param string|null dbSchema (optional) the schema name for all database tables used by this component
 		 */
-		public Administration(PdoDatabase databaseConnection, string dbTablePrefix=null, string dbSchema = null)
-			: base(databaseConnection, dbTablePrefix, dbSchema)
+		public Administration(PdoDatabase databaseConnection, string dbTablePrefix, string dbSchema,
+			Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim)
+			: base(databaseConnection, dbTablePrefix, dbSchema,
+				  cookieShim, sessionShim, serverShim)
 		{ }
 
 		/**

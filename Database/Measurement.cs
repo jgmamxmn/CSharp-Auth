@@ -9,7 +9,7 @@ namespace Delight.Db
 {
 
 	/** Individual measurement of a profiler that monitors performance */
-	public abstract class Measurement : Delight.Shim.Shimmed
+	public abstract class Measurement : Delight.Shim.Shimmed_PHPOnly
 	{
 
 		/**
@@ -38,7 +38,7 @@ namespace Delight.Db
 		 *
 		 * @return array
 		 */
-		public abstract List<Shim.Shimmed.debug_backtrace_param> getTrace();
+		public abstract List<Shim.Shimmed_PHPOnly.debug_backtrace_param> getTrace();
 
 	}
 }

@@ -18,7 +18,7 @@ namespace Delight.Auth
 	 *
 	 * @internal
 	 */
-	abstract public class UserManager : Delight.Shim.Shimmed {
+	abstract public class UserManager : Delight.Shim.Shimmed_Full {
 
 		public delegate void DgtConfirmationEmail(string selector, string token);
 
@@ -54,7 +54,10 @@ namespace Delight.Auth
 		 * @param string|null dbTablePrefix (optional) the prefix for the names of all database tables used by this component
 		 * @param string|null dbSchema (optional) the schema name for all database tables used by this component
 		 */
-		protected UserManager(PdoDatabase databaseConnection, string dbTablePrefix = null, string dbSchema = null) {
+		protected UserManager(PdoDatabase databaseConnection, string dbTablePrefix, string dbSchema,
+			Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim)
+			: base(cookieShim, sessionShim, serverShim)
+		{
 			/*if (databaseConnection instanceof PdoDatabase) {
 				this.db = databaseConnection;
 			}
@@ -288,7 +291,7 @@ namespace Delight.Auth
 
 			email = trim(email);
 
-			if (!filter_var(email, Shim.Shimmed.FILTER.FILTER_VALIDATE_EMAIL)) {
+			if (!filter_var(email, Shim.Shimmed_PHPOnly.FILTER.FILTER_VALIDATE_EMAIL)) {
 				throw new InvalidEmailException();
 			}
 

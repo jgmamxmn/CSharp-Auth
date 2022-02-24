@@ -7,7 +7,10 @@ using BCrypt.Net;
 
 namespace Delight.Shim
 {
-	public abstract class Shimmed
+	/// <summary>
+	/// Includes various implementations of PHP functions etc.
+	/// </summary>
+	public abstract class Shimmed_PHPOnly
 	{
 		protected const string __NAMESPACE__ = "Delight";
 		protected const int PHP_INT_MAX = int.MaxValue; //~(int)0;
@@ -209,56 +212,6 @@ namespace Delight.Shim
 		}
 
 
-		public static void header(string headerString, bool replace = true, int responseCode = 0) 
-		{
-			var h = headerString.Split(new[] { ':' }, 2).Select(S => S.Trim()).ToArray();
-			switch(h[0].ToLower())
-			{
-				case "set-cookie":
-					var c = Delight.Cookie.Cookie.parse(headerString);
-					_COOKIE.Set(c.getName(), c);
-					break;
-				default:
-					// do nothing?
-					break;
-			}
-		}
-		public bool headers_sent() => false;
-		public static List<string> headers_list()
-		{
-			var ret = new List<string>();
-			foreach (var c in _COOKIE.Dict)
-				ret.Add(c.Value._ToString());
-			return ret;
-		}
-		public static void header_remove(string name)
-		{
-			if (name == "Set-Cookie")
-			{
-				Console.WriteLine("Clearing all cookies?");
-				_COOKIE.Dict.Clear();
-			}
-			else
-			{
-				// N/A
-			}
-		}
-
-		public static Shim._SERVER _SERVER = new Shim._SERVER();
-		public static Shim._COOKIE _COOKIE = new Shim._COOKIE();
-		public static Shim._SESSION _SESSION = new Shim._SESSION();
-
-		public string session_name(string newSessionName = null)
-		{
-			if (newSessionName == null)
-				return _SESSION._SessionName;
-			else
-			{
-				var ret = _SESSION._SessionName;
-				_SESSION._SessionName = newSessionName;
-				return ret;
-			}
-		}
 
 		protected enum FILTER
 		{
@@ -296,11 +249,6 @@ namespace Delight.Shim
 					return true;
 			}
 		}
-
-		public void session_destroy() => _SESSION.session_destroy();
-		public void session_regenerate_id(bool deleteOldSession) => _SESSION.session_regenerate_id(deleteOldSession);
-		public _SESSION.CookieParams session_get_cookie_params() => _SESSION.session_get_cookie_params();
-
 
 		protected enum ARRAY_FILTER_USE_VALUE { x }
 		protected enum ARRAY_FILTER_USE_KEY { x }
@@ -466,6 +414,73 @@ namespace Delight.Shim
 
 	}
 
+	/// <summary>
+	/// Includes implementation of PHP functions AND ALSO a meta-environment capable of emulating cookies, server, and session info
+	/// </summary>
+	public abstract class Shimmed_Full : Shimmed_PHPOnly
+	{
+		protected static Shim._COOKIE _COOKIE;
+		protected static Shim._SESSION _SESSION;
+		protected static Shim._SERVER _SERVER;
+		protected Shimmed_Full(_COOKIE cookieShim, _SESSION sessionShim, _SERVER serverShim)
+		{
+			_COOKIE = cookieShim;
+			_SESSION = sessionShim;
+			_SERVER = serverShim;
+		}
+
+		public void session_destroy() => _SESSION.session_destroy();
+		public void session_regenerate_id(bool deleteOldSession) => _SESSION.session_regenerate_id(deleteOldSession);
+		public _SESSION.CookieParams session_get_cookie_params() => _SESSION.session_get_cookie_params();
+
+		public static void header(string headerString, bool replace = true, int responseCode = 0)
+		{
+			var h = headerString.Split(new[] { ':' }, 2).Select(S => S.Trim()).ToArray();
+			switch (h[0].ToLower())
+			{
+				case "set-cookie":
+					var c = Delight.Cookie.Cookie.parse(headerString);
+					_COOKIE.Set(c.getName(), c);
+					break;
+				default:
+					// do nothing?
+					break;
+			}
+		}
+		public bool headers_sent() => false;
+		public static List<string> headers_list()
+		{
+			var ret = new List<string>();
+			foreach (var c in _COOKIE.Dict)
+				ret.Add(c.Value._ToString());
+			return ret;
+		}
+		public static void header_remove(string name)
+		{
+			if (name == "Set-Cookie")
+			{
+				Console.WriteLine("Clearing all cookies?");
+				_COOKIE.Dict.Clear();
+			}
+			else
+			{
+				// N/A
+			}
+		}
+
+		public string session_name(string newSessionName = null)
+		{
+			if (newSessionName == null)
+				return _SESSION._SessionName;
+			else
+			{
+				var ret = _SESSION._SessionName;
+				_SESSION._SessionName = newSessionName;
+				return ret;
+			}
+		}
+
+	}
 
 }
 

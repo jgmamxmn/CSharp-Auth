@@ -19,7 +19,7 @@ namespace Delight.Cookie
 	 *
 	 * Note that cookies must always be set before the HTTP headers are sent to the client, i.e. before the actual output starts
 	 */
-	public sealed class Cookie : Delight.Shim.Shimmed
+	public sealed class Cookie : Delight.Shim.Shimmed_Full
 	{
 
 		/** @var string name prefix indicating that the cookie must be from a secure origin (i.e. HTTPS) and the "secure" attribute must be set */
@@ -53,7 +53,8 @@ namespace Delight.Cookie
 		 *
 		 * @param string name the name of the cookie which is also the key for future accesses via `_COOKIE[...]`
 		 */
-		public Cookie(string name)
+		public Cookie(string name, Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim)
+			:base(cookieShim, sessionShim, serverShim)
 		{
 			this.name = name;
 			this.value = null;
@@ -301,7 +302,7 @@ namespace Delight.Cookie
 
 		Cookie Clone()
 		{
-			return new Cookie(this.name)
+			return new Cookie(this.name, _COOKIE, _SESSION, _SERVER)
 			{
 				domain = this.domain,
 				expiryTime = this.expiryTime,
@@ -462,7 +463,7 @@ namespace Delight.Cookie
 			var cookiepair = kvps.First().Split('=').Select(S => S.Trim()).ToArray();
 			kvps.RemoveAt(0);
 
-			var cookie = new Cookie(cookiepair[0]);
+			var cookie = new Cookie(cookiepair[0], _COOKIE, _SESSION, _SERVER);
 			cookie.setPath(null);
 			cookie.setHttpOnly(false);
 			cookie.setValue(urldecode(cookiepair[1]));

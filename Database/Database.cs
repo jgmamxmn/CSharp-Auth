@@ -15,7 +15,7 @@ namespace Delight.Db
 	use Delight\Db\Throwable\TransactionFailureException;*/
 
 	/** Safe and convenient SQL database access in a driver-agnostic way */
-	public abstract class Database : Delight.Shim.Shimmed
+	public abstract class Database : Delight.Shim.Shimmed_PHPOnly
 	{
 		public delegate void DgtOnConnectListener(PdoDatabase pdoDatabase);
 

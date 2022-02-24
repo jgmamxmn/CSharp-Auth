@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Delight.Http
 {
-	public class ResponseHeader : Shim.Shimmed
+	public class ResponseHeader : Shim.Shimmed_Full
 	{
-		public ResponseHeader() { }
+		public ResponseHeader(Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim) 
+			: base(cookieShim, sessionShim, serverShim)
+		{ }
 
 		/**
 		 * Returns the header with the specified name (and optional value prefix)

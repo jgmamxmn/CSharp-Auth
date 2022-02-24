@@ -16,7 +16,7 @@ namespace Delight.Db
 	 *
 	 * https://dev+mysql+com/doc/refman/5+5/en/error-messages-server+html
 	 */
-	sealed public class ErrorHandler : Delight.Shim.Shimmed
+	sealed public class ErrorHandler : Delight.Shim.Shimmed_PHPOnly
 	{
 
 		/**

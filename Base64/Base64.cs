@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Delight
 {
 	/** Utilities for encoding and decoding data using Base64 and variants thereof */
-	public sealed partial class Base64 : Delight.Shim.Shimmed
+	public sealed partial class Base64 : Delight.Shim.Shimmed_PHPOnly
 	{
 		/**
 		 * The last three characters from the alphabet of the standard implementation

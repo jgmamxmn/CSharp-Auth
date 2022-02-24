@@ -17,7 +17,7 @@ namespace Delight.Auth
 	/** Component that provides all features and utilities for secure authentication of individual users */
 	sealed public class Auth : UserManager {
 
-		public static string[] COOKIE_PREFIXES = new string[] { Delight.Cookie.Cookie.PREFIX_SECURE, Delight.Cookie.Cookie.PREFIX_HOST };
+		public static readonly string[] COOKIE_PREFIXES = new string[] { Delight.Cookie.Cookie.PREFIX_SECURE, Delight.Cookie.Cookie.PREFIX_HOST };
 		internal const string COOKIE_CONTENT_SEPARATOR = "~";
 
 		/** @var string the user"s current IP address */
@@ -41,7 +41,8 @@ namespace Delight.Auth
 		 */
 		public Auth(PdoDatabase databaseConnection, string ipAddress = null, string dbTablePrefix = null, bool? throttling = null,
 			int? sessionResyncInterval = null, string dbSchema = null)
-			: base(databaseConnection, dbTablePrefix, dbSchema)
+			: base(databaseConnection, dbTablePrefix, dbSchema,
+				  new Shim._COOKIE(), new Shim._SESSION(), new Shim._SERVER())
 		{
 			this.ipAddress = !empty(ipAddress) ? ipAddress : (isset(_SERVER.REMOTE_ADDR) ? _SERVER.REMOTE_ADDR : null);
 			this.throttling = throttling ?? true;
@@ -565,7 +566,7 @@ namespace Delight.Auth
 
 			// save the cookie with the selector and token (requests a cookie to be written on the client)
 			{
-				var cookie = new Delight.Cookie.Cookie(this.rememberCookieName);
+				var cookie = new Delight.Cookie.Cookie(this.rememberCookieName, _COOKIE, _SESSION, _SERVER);
 				cookie.setValue(content);
 				cookie.setExpiryTime(expires);
 				cookie.setPath(myParams.path);
@@ -582,7 +583,7 @@ namespace Delight.Auth
 			// if we"ve been deleting the cookie above
 			if (!isset(selector) || !isset(token)) {
 				// attempt to delete a potential old cookie from versions v1.x.x to v6.x.x as well (requests a cookie to be written on the client)
-				var cookie = new Delight.Cookie.Cookie("auth_remember");
+				var cookie = new Delight.Cookie.Cookie("auth_remember", _COOKIE, _SESSION, _SERVER);
 				cookie.setPath((!empty(myParams.path)) ? myParams.path : "/");
 				cookie.setDomain(myParams.domain);
 				cookie.setHttpOnly(myParams.httponly);
@@ -623,7 +624,7 @@ namespace Delight.Auth
 			var myParams = session_get_cookie_params();
 
 			// ask for the session cookie to be deleted (requests a cookie to be written on the client)
-			var cookie = new Delight.Cookie.Cookie(session_name());
+			var cookie = new Delight.Cookie.Cookie(session_name(), _COOKIE, _SESSION, _SERVER);
 			cookie.setPath(myParams.path);
 			cookie.setDomain(myParams.domain);
 			cookie.setHttpOnly(myParams.httponly);
@@ -1874,9 +1875,6 @@ namespace Delight.Auth
 
 				// set the earliest time after which the bucket *may* be deleted (as a Unix timestamp in seconds)
 
-				Console.WriteLine($"now: {now}\ncapacity: {capacity}\nbandwidthPerSecond: {bandwidthPerSecond}\nsupply: {supply}\ninterval: {interval}");
-
-
 				bucket["expires_at"] = now + floor(((double)capacity) / bandwidthPerSecond * 2.0);
 
 				int affected;
@@ -1927,8 +1925,10 @@ namespace Delight.Auth
 		 *
 		 * @return Administration
 		 */
-		public Administration admin() {
-			return new Administration(this.db, this.dbTablePrefix, this.dbSchema);
+		public Administration admin(Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim)
+		{
+			return new Administration(this.db, this.dbTablePrefix, this.dbSchema, 
+				cookieShim, sessionShim, serverShim);
 		}
 
 		/**

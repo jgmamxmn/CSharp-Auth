@@ -18,7 +18,7 @@ namespace Delight.Db
 		/** @var array|null the values that have been bound to the query or statement */
 		private BindValues boundValues;
 		/** @var array|null the trace that shows the path taken through the program until the operation was executed */
-		private List<Shim.Shimmed.debug_backtrace_param> trace;
+		private List<Shim.Shimmed_PHPOnly.debug_backtrace_param> trace;
 
 		/**
 		 * Constructor
@@ -28,7 +28,7 @@ namespace Delight.Db
 		 * @param array|null boundValues (optional) the values that have been bound to the query or statement
 		 * @param array|null trace (optional) the trace that shows the path taken through the program until the operation was executed
 		 */
-		public SimpleMeasurement(double _duration, string _sql, BindValues _boundValues = null, List<Shim.Shimmed.debug_backtrace_param> _trace = null) 
+		public SimpleMeasurement(double _duration, string _sql, BindValues _boundValues = null, List<Shim.Shimmed_PHPOnly.debug_backtrace_param> _trace = null) 
 		{
 			this.duration = _duration;
 			this.sql = _sql;
@@ -48,7 +48,7 @@ namespace Delight.Db
 			return this.boundValues.Values.ToList();
 		}
 
-		override public List<Shim.Shimmed.debug_backtrace_param> getTrace() {
+		override public List<Shim.Shimmed_PHPOnly.debug_backtrace_param> getTrace() {
 			return this.trace.ToList();
 		}
 

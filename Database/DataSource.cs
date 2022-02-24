@@ -9,7 +9,7 @@ namespace Delight.Db
 {
 
 	/** Description of a data source */
-	public abstract class DataSource : Delight.Shim.Shimmed
+	public abstract class DataSource : Delight.Shim.Shimmed_PHPOnly
 	{
 
 		/**
