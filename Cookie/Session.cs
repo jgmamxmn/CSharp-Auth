@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace Delight.Cookie
 {
-	public class Session
+	public class Session : Shim.Shimmed_Full
 	{
+		public Session(Shim._COOKIE cookieShim, Shim._SESSION sessionShim, Shim._SERVER serverShim)
+			: base(cookieShim, sessionShim, serverShim)
+		{ }
+
 		public static void regenerate(Shim.Shimmed_Full shim, bool deleteOldSession = false, string sameSiteRestriction = Cookie.SAME_SITE_RESTRICTION_LAX)
 		{
 			// run PHP's built-in equivalent
@@ -20,13 +24,13 @@ namespace Delight.Cookie
 		private static void rewriteCookieHeader(Shim.Shimmed_Full shim, string sameSiteRestriction = Cookie.SAME_SITE_RESTRICTION_LAX)
 		{				
 			// get and remove the original cookie header set by PHP
-			var originalCookieHeader = Delight.Http.ResponseHeader.take("Set-Cookie", shim.session_name() + "=");
+			var originalCookieHeader = Delight.Http.ResponseHeader.take(shim, "Set-Cookie", shim.session_name() + "=");
 
 			// if a cookie header has been found
 			if (Shim.Shimmed_PHPOnly.isset(originalCookieHeader))
 			{
 				// parse it into a cookie instance
-				var parsedCookie = Cookie.parse(originalCookieHeader);
+				var parsedCookie = Cookie.parse(shim, originalCookieHeader);
 
 				// if the cookie has successfully been parsed
 				if (parsedCookie is object)

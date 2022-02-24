@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace Delight.Shim
 {
-	public class PDO
+	public class PDO : IDisposable
 	{
 		public Npgsql.NpgsqlConnection Connection;
 		public Npgsql.NpgsqlDataReader Reader = null;
@@ -70,6 +70,8 @@ namespace Delight.Shim
 		public bool inTransaction() => (_transaction is object);
 
 		private Dictionary<Db.PdoDatabase.ePDO, object> attribs = new System.Collections.Generic.Dictionary<Db.PdoDatabase.ePDO, object>();
+		private bool disposedValue;
+
 		public void setAttribute(Db.PdoDatabase.ePDO attr, object val)
 		{
 			if (attribs.ContainsKey(attr))
@@ -88,6 +90,35 @@ namespace Delight.Shim
 					else
 						return null; // ???
 			}
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					if(Reader is object)
+					{
+						Reader.Close();
+						Reader = null;
+					}
+					if (Connection is object)
+					{
+						Connection.CloseAsync();
+						Connection = null;
+					}
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 

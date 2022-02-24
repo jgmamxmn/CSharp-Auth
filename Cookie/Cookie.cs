@@ -448,7 +448,7 @@ namespace Delight.Cookie
 		 * @param string cookieHeader the cookie header to parse
 		 * @return \Delight\Cookie\Cookie|null the cookie instance or `null`
 		 */
-		public static Cookie parse(string cookieHeader)
+		public static Cookie parse(Shim.Shimmed_Full shim, string cookieHeader)
 		{
 			if (empty(cookieHeader))
 			{
@@ -463,7 +463,7 @@ namespace Delight.Cookie
 			var cookiepair = kvps.First().Split('=').Select(S => S.Trim()).ToArray();
 			kvps.RemoveAt(0);
 
-			var cookie = new Cookie(cookiepair[0], _COOKIE, _SESSION, _SERVER);
+			var cookie = new Cookie(cookiepair[0], shim._COOKIE, shim._SESSION, shim._SERVER);
 			cookie.setPath(null);
 			cookie.setHttpOnly(false);
 			cookie.setValue(urldecode(cookiepair[1]));

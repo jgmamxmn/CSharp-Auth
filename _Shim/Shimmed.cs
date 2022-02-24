@@ -419,9 +419,9 @@ namespace Delight.Shim
 	/// </summary>
 	public abstract class Shimmed_Full : Shimmed_PHPOnly
 	{
-		protected static Shim._COOKIE _COOKIE;
-		protected static Shim._SESSION _SESSION;
-		protected static Shim._SERVER _SERVER;
+		public Shim._COOKIE _COOKIE;
+		public Shim._SESSION _SESSION;
+		public Shim._SERVER _SERVER;
 		protected Shimmed_Full(_COOKIE cookieShim, _SESSION sessionShim, _SERVER serverShim)
 		{
 			_COOKIE = cookieShim;
@@ -433,13 +433,13 @@ namespace Delight.Shim
 		public void session_regenerate_id(bool deleteOldSession) => _SESSION.session_regenerate_id(deleteOldSession);
 		public _SESSION.CookieParams session_get_cookie_params() => _SESSION.session_get_cookie_params();
 
-		public static void header(string headerString, bool replace = true, int responseCode = 0)
+		public void header(string headerString, bool replace = true, int responseCode = 0)
 		{
 			var h = headerString.Split(new[] { ':' }, 2).Select(S => S.Trim()).ToArray();
 			switch (h[0].ToLower())
 			{
 				case "set-cookie":
-					var c = Delight.Cookie.Cookie.parse(headerString);
+					var c = Delight.Cookie.Cookie.parse(this, headerString);
 					_COOKIE.Set(c.getName(), c);
 					break;
 				default:
@@ -448,14 +448,14 @@ namespace Delight.Shim
 			}
 		}
 		public bool headers_sent() => false;
-		public static List<string> headers_list()
+		public List<string> headers_list()
 		{
 			var ret = new List<string>();
 			foreach (var c in _COOKIE.Dict)
 				ret.Add(c.Value._ToString());
 			return ret;
 		}
-		public static void header_remove(string name)
+		public void header_remove(string name)
 		{
 			if (name == "Set-Cookie")
 			{
