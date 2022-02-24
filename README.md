@@ -22,7 +22,7 @@ var PDO = new Delight.Shim.PDO("Host=<server IP here>;Database=<database name he
 // Create an Auth-friendly wrapper object
 var DB = new Delight.Db.PdoDatabase(PDO);
 // Create an Auth object
-var Auth = new Auth(DB);
+var Auth = new Delight.Auth.Auth(DB);
       
 // If you want to set any cookies for the Auth session, use the Auth._COOKIE object.
 
