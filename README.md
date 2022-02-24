@@ -4,11 +4,12 @@
 
 **Authentication for PHP, but actually for C#.**
 
-Port of PHP-Auth for C#.
+Port of PHP-Auth for C#. Everyone says "don't roll your own authentication library", so here we are.
 
-Currently only supports Postgresql, the Shim.PDO wrapper should be easy enough to replicate for other databases.
+Currently only supports Postgresql, the Shim.PDO wrapper should be easy enough to replicate for other databases. Uses Npgsql for the Postgresql connection.
 
-Uses Npgsql for the Postgresql connection.
+It isn't directly integrated with a webserver. Cookies, session, and headers are loosely emulated through `_COOKIE`, `_SESSION`, and `_SERVER` objects.
+Importantly _*these are static objects*_ so you'll need to figure out a better way to manage them in a real server environment...
 
 ## Simple usage
 
