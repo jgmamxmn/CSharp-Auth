@@ -36,6 +36,10 @@ try
         
   // If you want to access any cookies that may have been set by Auth, use the Auth._COOKIE object.
 }
+catch (Delight.Auth.InvalidEmailException)
+{
+  Console.WriteLine("Bad username/password");
+}
 catch (Delight.Auth.InvalidPasswordException)
 {
   Console.WriteLine("Bad username/password");
